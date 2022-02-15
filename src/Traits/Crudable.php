@@ -5,6 +5,7 @@ namespace Freelabois\LaravelQuickstart\Traits;
 use Freelabois\LaravelQuickstart\Extendables\Resource;
 use Freelabois\LaravelQuickstart\Interfaces\ManipulationManagerInterface;
 use Freelabois\LaravelQuickstart\Interfaces\RepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Crudable {
     use
@@ -45,6 +46,11 @@ trait Crudable {
     public function iso8859toutf8($returnable) {
         $array = [];
 
+        if($returnable instanceof LengthAwarePaginator) {
+            dd($returnable, $returnable->total());
+        }
+
+
         if ($returnable instanceof \Illuminate\Database\Eloquent\Model) {
             foreach ($returnable->getAttributes() as $att_key => $attribute_value) {
                 $array[iconv("ISO-8859-1", "UTF-8", $att_key)] = $this->iso8859toutf8($attribute_value);
@@ -64,7 +70,12 @@ trait Crudable {
             return $returnable;
         }
 
+
         if (is_object($returnable) || is_array($returnable)) {
+
+
+
+
             foreach ($returnable as $key => $returnable_value) {
 
                 if (!in_array($key, ['timestamps', 'incrementing', 'preventsLazyLoading', 'exists',
