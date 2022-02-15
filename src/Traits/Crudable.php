@@ -77,11 +77,15 @@ trait Crudable {
                 $array['path'] = $returnable->path();
                 $array['next_page_url'] = $returnable->nextPageUrl();
                 $array['prev_page_url'] = $returnable->previousPageUrl();
-
+                $array['links'] = $returnable->linkCollection();
+//                $returnable->data();
+//                $array['from'] = $returnable->pa();
             }
 
             foreach ($returnable as $key => $returnable_value) {
-
+                if ($returnable instanceof LengthAwarePaginator) {
+                    dump("inside", $returnable, $key, $returnable_value);
+                }
                 if (!in_array($key, ['timestamps', 'incrementing', 'preventsLazyLoading', 'exists',
                     'wasRecentlyCreated'])) {
                     if (is_numeric($key)) {
@@ -91,9 +95,16 @@ trait Crudable {
                     }
                 }
             }
+
+
         }
 
+        if ($returnable instanceof LengthAwarePaginator) {
+            dump('outside', $array);
+        }
 
         return $array;
     }
+
+
 }
