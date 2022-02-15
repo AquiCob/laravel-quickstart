@@ -46,10 +46,6 @@ trait Crudable {
     public function iso8859toutf8($returnable) {
         $array = [];
 
-        if($returnable instanceof LengthAwarePaginator) {
-            dd($returnable, $returnable->total());
-        }
-
 
         if ($returnable instanceof \Illuminate\Database\Eloquent\Model) {
             foreach ($returnable->getAttributes() as $att_key => $attribute_value) {
@@ -73,8 +69,16 @@ trait Crudable {
 
         if (is_object($returnable) || is_array($returnable)) {
 
+            if ($returnable instanceof LengthAwarePaginator) {
+                $array['total'] = $returnable->total();
+                $array['lastPage'] = $returnable->lastPage();
+                $array['perPage'] = $returnable->perPage();
+                $array['currentPage'] = $returnable->currentPage();
+                $array['path'] = $returnable->path();
+                $array['next_page_url'] = $returnable->nextPageUrl();
+                $array['prev_page_url'] = $returnable->previousPageUrl();
 
-
+            }
 
             foreach ($returnable as $key => $returnable_value) {
 
