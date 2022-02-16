@@ -55,7 +55,7 @@ trait Crudable {
             foreach ($returnable->getRelations() as $rel_key => $relationship) {
                 $array[iconv("ISO-8859-1", "UTF-8", $rel_key)] = $this->iso8859toutf8($relationship);
             }
-
+            return $array;
         }
 
         if (is_string($returnable)) {
@@ -66,41 +66,41 @@ trait Crudable {
             return $returnable;
         }
 
+        if ($returnable instanceof LengthAwarePaginator) {
+
+
+            $array['data'] = $this->iso8859toutf8($returnable->all());
+            $array['total'] = $returnable->total();
+            $array['lastPage'] = $returnable->lastPage();
+            $array['perPage'] = $returnable->perPage();
+            $array['currentPage'] = $returnable->currentPage();
+            $array['path'] = $returnable->path();
+            $array['next_page_url'] = $returnable->nextPageUrl();
+            $array['prev_page_url'] = $returnable->previousPageUrl();
+            $array['links'] = $returnable->linkCollection();
+
+            return $array;
+        }
+
 
         if (is_object($returnable) || is_array($returnable)) {
 
-            if ($returnable instanceof LengthAwarePaginator) {
-                $array['total'] = $returnable->total();
-                $array['lastPage'] = $returnable->lastPage();
-                $array['perPage'] = $returnable->perPage();
-                $array['currentPage'] = $returnable->currentPage();
-                $array['path'] = $returnable->path();
-                $array['next_page_url'] = $returnable->nextPageUrl();
-                $array['prev_page_url'] = $returnable->previousPageUrl();
-                $array['links'] = $returnable->linkCollection();
-//                $returnable->data();
-//                $array['from'] = $returnable->pa();
-            }
-
             foreach ($returnable as $key => $returnable_value) {
-                if ($returnable instanceof LengthAwarePaginator) {
-                    dump("inside", $returnable, $key, $returnable_value);
+
+                if (is_numeric($key)) {
+                    $array[] = $this->iso8859toutf8($returnable_value);
+                    continue;
                 }
+
                 if (!in_array($key, ['timestamps', 'incrementing', 'preventsLazyLoading', 'exists',
                     'wasRecentlyCreated'])) {
-                    if (is_numeric($key)) {
-                        $array[] = $this->iso8859toutf8($returnable_value);
-                    } else {
-                        $array[iconv("ISO-8859-1", "UTF-8", $key)] = $this->iso8859toutf8($returnable_value);
-                    }
+
+                    $array[iconv("ISO-8859-1", "UTF-8", $key)] = $this->iso8859toutf8($returnable_value);
+
                 }
             }
 
 
-        }
-
-        if ($returnable instanceof LengthAwarePaginator) {
-            dump('outside', $array);
         }
 
         return $array;
