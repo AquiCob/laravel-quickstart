@@ -210,7 +210,7 @@ class Repository implements RepositoryInterface {
         }
 
         if ($this->returnable instanceof LengthAwarePaginator) {
-            return $this->presenter::collection($this->returnable);
+            return $this->returnable;
         }
 
         $model_class = get_class(new $this->model());
